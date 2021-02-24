@@ -1,4 +1,4 @@
-#include "../sync_server/sync_network.h"
+#include "sync_network.h"
 
 using namespace sync_h;
 
