@@ -1,19 +1,16 @@
-#include <iostream>
-#include <vector>
-
-#include "sync_network.h"
+#include "../sync_server/sync_network.h"
 
 using namespace sync_h;
 
 class client : public sync_network<int> {
 private:
-	asio::ip::tcp::socket* socket = nullptr;
-	asio::ip::tcp::endpoint* endpoint = nullptr;
+	std::unique_ptr<asio::ip::tcp::socket> socket{ nullptr };
+	std::unique_ptr <asio::ip::tcp::endpoint> endpoint{ nullptr };
 	std::string nick = "default > ";
 public:
 	client(int loop_flag) : sync_network(loop_flag) {
-		socket = new asio::ip::tcp::socket(io_context);
-		endpoint = new asio::ip::tcp::endpoint(asio::ip::make_address(LOCAL_ADDRESS, error), PORT);
+		socket = std::make_unique<asio::ip::tcp::socket>(io_context);
+		endpoint = std::make_unique<asio::ip::tcp::endpoint>(asio::ip::make_address(LOCAL_ADDRESS, error), PORT);
 	}
 	~client() {
 		disconnect();
@@ -39,8 +36,6 @@ public:
 	}
 	void disconnect() {
 		socket->close();
-		delete socket;
-		delete endpoint;
 	}
 	void client_connect(){
 		socket->connect(*endpoint, error);

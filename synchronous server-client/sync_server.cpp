@@ -1,17 +1,15 @@
-#include <iostream>
-#include <vector>
 #include "sync_network.h"
 
 using namespace sync_h;
 
 class server : public sync_network<int>{
 private:
-    asio::ip::tcp::socket* socket = nullptr;
-    asio::ip::tcp::acceptor* acceptor = nullptr;
+    std::unique_ptr<asio::ip::tcp::socket> socket{ nullptr };
+    std::unique_ptr<asio::ip::tcp::acceptor> acceptor{ nullptr };
 public:
     server(int loop_flag) : sync_network(loop_flag) {
-        socket = new  asio::ip::tcp::socket(io_context);
-        acceptor = new asio::ip::tcp::acceptor(io_context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), PORT));
+        socket = std::make_unique<asio::ip::tcp::socket>(io_context);
+        acceptor = std::make_unique<asio::ip::tcp::acceptor>(io_context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), PORT));
         acceptor->set_option(asio::ip::tcp::acceptor::reuse_address(true));
     }
     ~server() {
@@ -33,9 +31,8 @@ public:
         }
     }
     void disconnect() {
+        io_context.stop();
         socket->close();
-        delete socket;
-        delete acceptor;
     }
     void server_accept() {
         acceptor->accept(*socket, error);
@@ -66,6 +63,7 @@ public:
                  /* std::string s1;
                     std::getline(std::cin, s1);
                     send_packet(s1);*/
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
                     server_read();
                 }
             }
@@ -78,9 +76,9 @@ public:
 };
 
 int main() {
-    std::unique_ptr<server> test1(new server(1));
-    test1->server_listen();
-    test1->server_read();
+    server test1(1);
+    test1.server_listen();
+    test1.server_read();
 
     return 0;
 }

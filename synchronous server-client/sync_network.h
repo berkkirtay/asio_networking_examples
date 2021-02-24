@@ -8,12 +8,16 @@
 #include <asio/ts/buffer.hpp>
 #include <vector>
 #include <cstdint>
+#include <chrono>
+#include <iostream>
+#include <fstream>
 
-#define PORT 80
+namespace sync_h {
+
+#define PORT 8080
 #define LOCAL_ADDRESS "127.0.0.1"
 #define REMOTE_ADDRESS "0.0.0.0"
 
-namespace sync_h {
 	template<class packet_type>
 	class sync_network {
 	protected:
@@ -30,9 +34,6 @@ namespace sync_h {
 				packet_flag = 1;
 			}
 		}
-		virtual void disconnect() {
-
-		}
+		virtual void disconnect() { }
 	};
-
 }
