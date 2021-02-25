@@ -15,7 +15,7 @@
 namespace sync_h {
 
 #define PORT 8080
-#define LOCAL_ADDRESS "127.0.0.1"
+#define LOCAL_ADDRESS "127.0.0.7"
 #define REMOTE_ADDRESS "0.0.0.0"
 
 	template<class packet_type>
