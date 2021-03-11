@@ -23,7 +23,7 @@ private:
     asio::io_context io_context;
     std::unique_ptr<asio::ip::tcp::acceptor> acceptor{ nullptr };
     std::vector<std::shared_ptr<asio::ip::tcp::socket>> clients;
-    std::vector<std::thread> context_threads;
+    std::vector<std::unique_ptr<std::thread>> context_threads;
     int client_number = 0;
     int server_type = 0; // default 0 for server-client, 1 for web-server
 public:
@@ -41,8 +41,8 @@ public:
         server_accept();
     }
     void server_stop() {
-        io_context.stop();
         clients.clear();
+        io_context.stop();
     }
     void set_server_type(int type) {
         server_type = type;
